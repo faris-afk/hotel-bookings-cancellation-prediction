@@ -34,3 +34,5 @@ Here is the full result:
 ## Model Analysis
 
 After analyzing each feature's importance based on the model, it was found that deposit type is the biggest factor deciding whether a customer will cancel their booking or not. Further analysis identified that bookings with Non-Refundable deposit type have an almost 100% cancellation rate. To address this, XYZ can review their refund policy. For example, they could remove the Non-Refundable choice while adding a deposit type called Partially Refundable.
+
+[HuggingFace Deployment](https://huggingface.co/spaces/FarizFirdaus/HotelBookingCancelPrediction)
