@@ -4,6 +4,28 @@ import pandas as pd
 import numpy as np
 import pickle
 import json
+import datetime
+
+def normalize(df):
+    df['lead_time'] = np.log(df['lead_time'] + 1)
+    df['arrival_date_week_number'] = np.log(df['arrival_date_week_number'] + 1)
+    df['arrival_date_day_of_month'] = np.log(df['arrival_date_day_of_month'] + 1)
+    df['agent'] = np.log(df['agent'] + 1)
+    df['adr'] = np.log(df['adr'] + 1)
+    return df
+
+def encode(df):
+    df['hotel'] = df['hotel'].map({'Resort Hotel' : 0, 'City Hotel' : 1})
+    df['meal'] = df['meal'].map({'BB' : 0, 'FB': 1, 'HB': 2, 'SC': 3, 'Undefined': 4})
+    df['market_segment'] = df['market_segment'].map({'Direct': 0, 'Corporate': 1, 'Online TA': 2, 'Offline TA/TO': 3, 'Complementary': 4, 'Groups': 5, 'Undefined': 6, 'Aviation': 7})
+    df['distribution_channel'] = df['distribution_channel'].map({'Direct': 0, 'Corporate': 1, 'TA/TO': 2, 'Undefined': 3, 'GDS': 4})
+    df['reserved_room_type'] = df['reserved_room_type'].map({'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5, 'G': 6, 'H': 7, 'I': 8, 'J': 9, 'K': 10, 'L': 11})
+    df['deposit_type'] = df['deposit_type'].map({'No Deposit': 0, 'Refundable': 1, 'Non Refund': 3})
+    df['customer_type'] = df['customer_type'].map({'Transient': 0, 'Contract': 1, 'Transient-Party': 2, 'Group': 3})
+    df['season'] = df['season'].map({'Spring':0, 'Summer':1, 'Fall':2, 'Winter':3})
+    df['year'] = df['year'].map({2015: 0, 2014: 1, 2016: 2, 2017: 3})
+    return df
+
 
 # Load
 with open('pipeline_best.pkl', 'rb') as file_1:
@@ -85,6 +107,20 @@ def run():
     if predict:
         # Convert the inputs into a dataframe
         input_df = pd.DataFrame([inputs])
+
+        # Create a season column using a lambda function
+        input_df["season"] = input_df["arrival_date_month"].apply(lambda x: "Winter" if x in ["January", "February", "December"]
+                                                                    else "Spring" if x in ["March", "April", "May"]
+                                                                    else "Summer" if x in ["June", "July", "August"]
+                                                                    else "Fall")
+
+        input_df['reservation_status_date'] = pd.to_datetime(input_df['reservation_status_date'])
+
+        input_df['year'] = input_df['reservation_status_date'].dt.year
+        input_df['month'] = input_df['reservation_status_date'].dt.month
+        input_df['day'] = input_df['reservation_status_date'].dt.day
+
+        input_df.drop(['reservation_status_date','arrival_date_month'] , axis = 1, inplace = True) # these column become useless
 
         # Make the prediction
         prediction = pipeline_best.predict(input_df)[0]
