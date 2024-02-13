@@ -1,4 +1,6 @@
-# Background
+# Hotel Bookings Cancellation Prediction
+
+## Background
 
 Hotel booking cancellations are a significant issue in the hotel industry, leading to substantial revenue losses. Cancellations are often unpredictable and depend on various factors such as deposit type, customer profile, and seasonality. Therefore, forecasting demand and cancellation probability for each booking is crucial for hotel managers to optimize their pricing, inventory, and operational strategies.
 
